@@ -1,0 +1,382 @@
+---
+title: "Case 1 Study: Cyclistic Bike-Share R Markdown"
+author: "Stephany Lamas"
+date: "2025-06-27"
+output:
+  html_document:
+    df_print: paged
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Introduction
+This case study is one of three case studies available when completing the Google Data Analytics Professional Certificate. Upon completion the student, may qualify to receive the certificate.
+
+## Case Study Description
+
+## Case Study Question
+How do annual members and casual riders use Cyclistic bikes differently? 
+
+## Update Log 
+06/26/25 - Stephany Lamas - prepared data for analysis
+06/27/2025 Stephany Lamas -
+
+## Case Study Deliverables 
+
+1. A clear statement of the business task 
+2. A description of all data sources used 
+3. Documentation of any cleaning or manipulation of data 
+4. A summary of your analysis 
+5. Supporting visualizations and key findings 
+6. Your top three recommendations based on your analysis
+
+## Ask ---------
+# Guiding questions 
+
+What is the problem you are trying to solve? 
+The problem I am trying to solve is understanding how annual members and casual riders use Cyclistic bikes differently. 
+
+How can your insights drive business decisions?
+The insights I find will contribute to the decision of the final marketing strategy used to convert casual riders to annual members.
+
+# Key tasks 
+Identify the business task 
+The business task is to determine the marketing strategy used to convert casual riders to annual members
+
+Consider key stakeholders
+The stakeholders include the executive board of Cyclistic
+
+# Deliverables 
+
+A clear statement of the business task
+Cyclistic will determine a marketing program to use based on the marketing director’s hypothesis that an increase of annual members equates to an increase in the company’s success. The marketing program decision will be driven by the insights provided by the marketing analysis team. The junior analysts will identify the behavior of annual members vs casual riders as part of this effort. 
+
+## Datasets
+Two sets were analyzed in this case study. 
+1. Divvy Trips 2019 Q1
+Dataset was installed as .csv file from the Google Sheets link provided in the case study assignment. After being imported the data was assigned to the variable "q1_2019" for ease of reference during the analysis.
+
+```{r 2019 Q1 Dataset}
+q1_2019 <- read.csv("divvy_trips_2019_q1.csv")
+view(q1_2019)
+```
+
+
+2. Divvy trips 2020 Q1
+Dataset was installed as .csv file from the Google Sheets link provided in the case study assignment. After being imported the data was assigned to the variable "q1_2020" for ease of reference during the analysis.
+
+```{r 2020 Q1 Dataset}
+q1_2020 <- read.csv("divvy_trips_2020_q1.csv")
+view(q1_2020)
+```
+
+## Prepare - 
+# Guiding Questions
+Where is the data located?
+The data is located under the project folder
+
+How is the data organized?
+The data was was exported from a Google Sheet dataset to a .csv file.
+
+Are there issues with bias or credibility in this data? Does your data ROCCC?
+There are no issues with bias or credibility as these datasets are from the Cyclistic company itself. The data is reliable because it comes the from the company itself. The data is orginal as the data formatting and number of columns is different from 2019 to 2020. The data is comprehensive. The data is current and cited.
+
+How are you addressing licensing, privacy, security and accessibility?
+For the purpose of this case study licensing, privacy, security and accessibility is not being taken into great consideration because we are analyzing psuedo data. 
+
+How did you verify the data's integrity?
+I verified the data's integrity by reviewing the data's columns, number of columns, data types, and relativity to the task at hand. I did note some transformations that will hhave to be completed. 
+
+How does it help you answer your question?
+It shows the behavior of each type of member, their frequent docking stations, trip durations and locations traveled during the trip.
+
+Are there any problems with the data?
+Yes the column numbers do not match, the column names are not the same in format and description, there are some blanks, there are three different types of the membership state: member, subscriber and casual. 
+
+# Key Tasks
+Download data and store it appropriately. 
+Done.
+
+Identify how it’s organized. 
+Done
+
+Sort and filter the data.
+Done 
+
+Determine the credibility of the data. 
+Done
+
+#Deliverable 
+Description of all data sources used
+The only data sources used are the q1 datasets from 2019 and 2020.
+
+##Process --------
+
+#Guiding Questions
+What tools are you choosing and why? 
+I am choosing the R Posit Cloud Studio because for the ease of wrangling the data and to practice and refine my R programming skills.
+
+Have you ensured your data’s integrity? 
+Yes
+
+What steps have you taken to ensure that your data is clean? 
+I have completed transformations on the data individually
+
+How can you verify that your data is clean and ready to analyze? 
+I can verify that the data is clean and ready for analysis when there are blanks removed, repeat data and all other noise is removed. 
+
+Have you documented your cleaning process so you can review and share those 
+results? 
+Yes, these changes have been made in the cleaning process. 
+
+#Key Tasks
+Check the data for errors.
+Done. 
+
+Choose your tools
+R and Posit Cloud Studio
+
+Transform the data so you can work with it effectively. 
+In Work
+
+Document the cleaning process. 
+
+# Tranformations
+2019 Q1 
+Renamed columns 
+```{r}
+q1_2019 <- q1_2019 %>% rename(ride_id = trip_id)
+q1_2019 <- q1_2019 %>% rename(bike_id = bikeid)
+q1_2019 <- q1_2019 %>% rename(trip_duration = tripduration)
+q1_2019 <- q1_2019 %>% rename(user_type = usertype)
+q1_2019 <- q1_2019 %>% rename(start_station_id = from_station_id)
+q1_2019 <- q1_2019 %>% rename(start_station_name = from_station_name)
+q1_2019 <- q1_2019 %>% rename(end_station_name = finish_station_id)
+q1_2019 <- q1_2019 %>% rename(end_station_id = to_station_id)
+```
+
+
+Updated user_type: Subscriber -> Member, Customer -> Casual 
+The business asks us to compare "annual members to casual members. This same verbiage should be used strictly to avoid any confusion and understanding the analysis results. 
+
+```{r}
+q1_2019 <- q1_2019 %>% mutate(user_type = ifelse(user_type == "Subscriber", "member", user_type))
+
+q1_2019 <- q1_2019 %>% mutate(user_type = ifelse(user_type == "Customer", "casual", user_type))
+```
+
+Removed Columns
+
+Removed gender and birthyear columns as they are not necessary to the analysis. Our task does not focus on the gender identity or age of the customers; only the behavior between customers with different membership types.
+
+```{r}
+q1_2019 <- q1_2019 %>% select(-birthyear)
+q1_2019 <- q1_2019 %>% select(-gender)
+```
+
+2020 Q1
+Removed Columns 
+The rideable_type data had no relevance to the project task
+```{r}
+q1_2020 <- q1_2020 %>% select(-rideable_type)
+```
+
+
+#Deliverable
+Documentation of any cleaning or manipulation of data
+This R markdown is the documentation of the data manipulation
+
+## Analyze ---------
+# Guiding questions 
+How should you organize your data to perform analysis on it? 
+Has your data been properly formatted? 
+What surprises did you discover in the data? 
+What trends or relationships did you find in the data? 
+How will these insights help answer your business questions?
+
+# Key tasks 
+Aggregate your data so it’s useful and accessible. 
+Organize and format your data. 
+Perform calculations. 
+Identify trends and relationships.
+
+# Deliverable 
+A summary of your analysis 
+
+Load Libraries ---
+loaded libraries tidyverse and conflicted
+
+Set Defaults ---
+set defaults choices for conflicted package choices
+```{r}
+conflict_prefer("filter", "dplyr")
+# [conflicted] Will prefer dplyr::filter over any other package.
+conflict_prefer("lag", "dplyr")
+# [conflicted] Will prefer dplyr::lag over any other package.
+```
+
+Collect Data (Step 1) ---
+```{r}
+q1_2019 <- read.csv("divvy_trips_2019_q1.csv")
+q1_2020 <- read.csv("divvy_trips_2020_q1.csv")
+```
+
+Wrangle and Combine Data into a Single File (Step 2) ---
+```{r}
+#comparing column names
+colnames(q1_2019)
+colnames(q1_2020)
+
+#renamed columns in 2019 q1 data to fit format of 2020 q1 data since the 2020 format will be used moving forward
+
+(q1_2019 <- rename(q1_2019
+                   ,ride_id = trip_id
+                   ,rideable_type = bikeid
+                   ,started_at = start_time
+                   ,ended_at = end_time
+                   ,start_station_name = from_station_name
+                   ,start_station_id = from_station_id
+                   ,end_station_name = to_station_name
+                   ,end_station_id = to_station_id
+                   ,member_casual = usertype
+                   ))
+
+#inspect data
+str(q1_2019)
+str(q1_2020)
+
+# convert ride_id and rideable_type to character so that they can stack correctly
+q1_2019 <-  mutate(q1_2019, ride_id = as.character(ride_id)
+                   ,rideable_type = as.character(rideable_type)) 
+
+#stacking data rows together
+all_trips <- all_trips %>%  
+  select(-c(start_lat, start_lng, end_lat, end_lng, birthyear, gender,  "tripduration"))
+
+#remove unncecessary columns
+all_trips <- all_trips %>%  
+  select(-c(start_lat, start_lng, end_lat, end_lng, birthyear, gender,  "tripduration"))
+
+```
+
+
+Prep for Analysis (Step 3) ---
+
+```{r}
+#inspect combined dataframe "all_trips"
+colnames(all_trips)
+
+#calculate number of rows
+nrows(all_trips)
+#791956
+
+#calculate dimensions of data frame
+dim(all_trips)
+#791956 x 9
+
+#first six rows of dataframe
+head(all_trips)
+
+#review list of columns and data types
+str(all_trips)
+
+#statistcal summary of data
+summary(all_trips)
+
+```
+
+Addressed Problems ---
+
+(1) In the "member_casual" column, there are two names for members ("member" and "Subscriber") and two names for casual riders ("Customer" and "casual"). We will need to consolidate that from four to two labels.
+
+```{r Changing member_casual Values}
+#Subscriber to Member
+all_trips <- mutate(all_trips, member_casual = ifelse(member_casual == "Subscriber", "member", member_casual))
+
+#Customer to Casual
+all_trips <- mutate(all_trips, member_casual = ifelse(member_casual == "Customer", "casual", member_casual))
+
+```
+
+
+(2) The data can only be aggregated at the ride-level, which is too granular. We will want to add some additional columns of data -- such as day, month, year -- that provide additional opportunities to aggregate the data.
+
+```{r Time Columns}
+#create date column
+all_trips$date <- as.Date(all_trips$started_at)
+
+#create month column
+all_trips$month <- format(as.Date(all_trips$date), "%m")
+
+#create day column
+all_trips$day <- format(as.Date(all_trips$date), "%d")
+
+#create year column
+all_trips$year <- format(as.Date(all_trips$date), "%Y")
+
+#create week column
+all_trips$day_of_week <- format(as.Date(all_trips$date), "%A")
+
+```
+
+
+(3) We will want to add a calculated field for length of ride since the 2020Q1 data did not have the "tripduration" column. We will add "ride_length" to the entire dataframe for consistency.
+
+```{r Ride Length Calc}
+all_trips$ride_length <- difftime(all_trips$ended_at,all_trips$started_at)
+
+#changing values to numeric
+is.factor(all_trips$ride_length)
+all_trips$ride_length <- as.numeric(as.character(all_trips$ride_length))
+is.numeric(all_trips$ride_length)all_trips_v2 <- all_trips[!(all_trips$start_station_name == "HQ QR" | all_trips$ride_length<0),]
+
+
+```
+
+
+(4) There are some rides where tripduration shows up as negative, including several hundred rides where Divvy took bikes out of circulation for Quality Control reasons. We will want to delete these rides.
+
+```{r Removing Data}
+
+#removes rides where the bikes are under quality inspection or have negative ride lengths
+all_trips_v2 <- all_trips[!(all_trips$start_station_name == "HQ QR" | all_trips$ride_length<0),]
+
+
+```
+
+##Conduct Descriptive Analysis (Step 4) --- 
+# Ride Length Analysis
+
+```{r Ride Length Analysis}
+
+
+mean(all_trips_v2$ride_length) #straight average (total ride length / rides)
+#[1] 1189.459
+
+median(all_trips_v2$ride_length) #midpoint number in the ascending array of ride lengths
+#[1] 539
+
+max(all_trips_v2$ride_length) #longest ride
+#[1] 10632022
+
+min(all_trips_v2$ride_length) #shortest ride
+#[1] 1
+
+#summary provides all the data necessary that was generated in the code above
+summary(all_trips_v2$ride_length)
+```
+
+#Members and Casual Users Analysis
+```{r User Type Analysis}
+aggregate(all_trips_v2$ride_length ~ all_trips_v2$member_casual, FUN = mean)
+aggregate(all_trips_v2$ride_length ~ all_trips_v2$member_casual, FUN = median)
+aggregate(all_trips_v2$ride_length ~ all_trips_v2$member_casual, FUN = max)
+aggregate(all_trips_v2$ride_length ~ all_trips_v2$member_casual, FUN = min)
+
+
+```
+
+
+

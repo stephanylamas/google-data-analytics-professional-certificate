@@ -1,0 +1,9 @@
+"0","library(data.table)
+"
+"2","G3;Registered S3 method overwritten by 'data.table':
+  method           from
+  print.data.table     
+g"
+"2","G3;data.table 1.17.2 using 6 threads (see ?getDTthreads).  g"
+"2","G3;Latest news: r-datatable.com
+g"
