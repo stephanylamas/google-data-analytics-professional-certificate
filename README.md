@@ -1,6 +1,6 @@
 **Google Data Analytics Professional Certificate**
 
-A display of the completed hands on activities and the capstone project during the Google Data Analytics Professional Certificate. 
+A compiliation of the case studies completed for the the Google Data Analytics Professional Certificate
+Languages: R
+Technologies: RStudio Posit Cloud, RStudio Desktop, Microsoft Excel, Google Slides
 
-Languages: SQL, R
-Technologies: Microsoft Excel, Google BigQuery, Tableau Public
