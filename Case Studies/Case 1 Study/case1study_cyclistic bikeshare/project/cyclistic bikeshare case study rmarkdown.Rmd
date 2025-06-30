@@ -481,6 +481,20 @@ In Work.
 Deliverable  
 ● Supporting visualizations and key findings  
 
-# Visualization of Average Ride Duration Per Week Day in Hours
+##Act
+Guiding questions 
+● What is your final conclusion based on your analysis? 
+● How could your team and business apply your insights? 
+● What next steps would you or your stakeholders take based on your findings? 
+● Is there additional data you could use to expand on your findings?
+
+Key tasks 
+● Create your portfolio. 
+● Add your case study. 
+● Practice presenting your case study to a friend or family member.
+
+Deliverable 
+● Your top three recommendations based on your analysis 
+
 
 
